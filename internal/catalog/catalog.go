@@ -9,6 +9,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/danylokravchenko/iceberg-grpc/icebergclient"
+	iceberclient "github.com/danylokravchenko/iceberg-grpc/icebergclient"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 )
@@ -20,10 +22,14 @@ type MinioClient interface {
 type IcebergRestCatalog struct {
 	MinioClient       MinioClient
 	BucketName        string
+	IcebergClient     *icebergclient.APIClient
 	IcebergCatalogUrl string
 }
 
 func NewCatalog(minioClient *minio.Client, bucketName, icebergCatalogUrl string) *IcebergRestCatalog {
+	cfg := iceberclient.NewConfiguration()
+	cfg.Host = icebergCatalogUrl
+	client := iceberclient.NewAPIClient(cfg)
 	ctx := context.Background()
 	exists, err := minioClient.BucketExists(ctx, bucketName)
 	if err != nil {
@@ -38,6 +44,7 @@ func NewCatalog(minioClient *minio.Client, bucketName, icebergCatalogUrl string)
 	return &IcebergRestCatalog{
 		MinioClient:       minioClient,
 		BucketName:        bucketName,
+		IcebergClient:     client,
 		IcebergCatalogUrl: icebergCatalogUrl,
 	}
 }
@@ -55,6 +62,15 @@ func (c *IcebergRestCatalog) WriteMetadataToMinIO(tableName, data string) (*mini
 }
 
 func (c *IcebergRestCatalog) CommitToIceberg(tableName, data string) error {
+	tables, _, err := c.IcebergClient.CatalogAPIAPI.ListTables(context.Background(), "", "default").Execute()
+	if err != nil {
+		panic(err)
+	}
+	tablesMap, err := tables.ToMap()
+	if err != nil {
+		panic(err)
+	}
+	log.Printf("All tables: %s", tablesMap)
 	url := fmt.Sprintf("%s/v1/namespaces/default/tables/%s/commit", c.IcebergCatalogUrl, tableName)
 	payload := map[string]interface{}{
 		"commitId": uuid.New().String(),

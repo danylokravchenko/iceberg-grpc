@@ -9,6 +9,20 @@
 
 ## Usage
 
+Generate Iceberg REST client:
+
+```bash
+make init
+```
+
+Run locally:
+
+```bash
+make run
+```
+
+Or inside docker:
+
 ```bash
 docker-compose up --build
 ```
@@ -17,18 +31,21 @@ docker-compose up --build
 
 ```log
 iceberg-grpc-server/
+├── api-gen                        # Generated from OpenAPI
 ├── cmd/
 │   └── server/
-│       └── main.go               # Main entry point
+│       └── main.go                # Main entry point
+├── config/
+│   └── rest-catalog-open-api.yaml # Iceberg REST OpenAPI specification
 ├── internal/
 │   ├── catalog/
-│   │   ├── catalog.go            # Catalog client
+│   │   ├── catalog.go             # Catalog client
 │   ├── grpc/
-│   │   └── service.go            # gRPC service implementation
+│   │   └── service.go             # gRPC service implementation
 │   ├── metrics/
-│   │   └── metrics.go            # Prometheus metric setup
+│   │   └── metrics.go             # Prometheus metric setup
 ├── proto/
-│   └── catalog.proto             # Protobuf definition
+│   └── catalog.proto              # Protobuf definition
 ├── go.mod
 ├── go.sum
 ├── Dockerfile
