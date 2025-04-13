@@ -29,6 +29,8 @@ type IcebergRestCatalog struct {
 func NewCatalog(minioClient *minio.Client, bucketName, icebergCatalogUrl string) *IcebergRestCatalog {
 	cfg := iceberclient.NewConfiguration()
 	cfg.Host = icebergCatalogUrl
+	cfg.Debug = true
+	cfg.Scheme = "http"
 	client := iceberclient.NewAPIClient(cfg)
 	ctx := context.Background()
 	exists, err := minioClient.BucketExists(ctx, bucketName)

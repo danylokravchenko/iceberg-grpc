@@ -1,6 +1,6 @@
 # Project variables
 PROTO_DIR := internal/proto
-GO_PROTO_OUT := catalog
+GO_PROTO_OUT := .
 MAIN := cmd/server/main.go
 BINARY := iceberg-grpc-server
 MODULE := danylokravchenko/iceberg-grpc
@@ -46,9 +46,6 @@ api-gen:
 ## Fetch the latest Iceberg OpenAPI Spec
 update-api:
 	@curl -o $(API_YAML) -fsSL $(API_SPEC)
-	@sed -i '' 's|{prefix}/||g' $(API_YAML)
-	@sed -i '' "s|.*: '#/components/parameters/prefix'||g" $(API_YAML)
-	@sed -i '' 's/    Namespace:/    Namespace:\n      x-go-name: Namespaces/' $(API_YAML)
 
 ## Start Docker services (MinIO, Nessie, gRPC server)
 docker-up:
@@ -67,6 +64,6 @@ clean:
 	@rm -rf $(API_GEN)
 
 ## Initialize the project
-init: clean update-api api-gen
+init: clean update-api api-gen proto
 	go work init . $(API_GEN)
 	go work sync

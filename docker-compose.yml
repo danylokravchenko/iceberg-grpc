@@ -1,20 +1,20 @@
 version: '3'
 services:
-  grpc-server:
-    build: .
-    ports:
-      - "50051:50051"
-      - "2112:2112"
-    environment:
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-      MINIO_ENDPOINT: minio:9000
-      CATALOG_URL: http://lakekeeper:8181/iceberg
-    depends_on:
-      - minio
-      - lakekeeper
-    networks:
-      iceberg_net:
+  # grpc-server:
+  #   build: .
+  #   ports:
+  #     - "50051:50051"
+  #     - "2112:2112"
+  #   environment:
+  #     MINIO_ACCESS_KEY: minioadmin
+  #     MINIO_SECRET_KEY: minioadmin
+  #     MINIO_ENDPOINT: minio:9000
+  #     CATALOG_URL: http://lakekeeper:8181/iceberg
+  #   depends_on:
+  #     - minio
+  #     - lakekeeper
+  #   networks:
+  #     iceberg_net:
 
   minio:
     image: minio/minio
@@ -43,7 +43,6 @@ services:
 
   lakekeeper:
     image: &lakekeeper-image ${LAKEKEEPER__SERVER_IMAGE:-quay.io/lakekeeper/catalog:latest-main}
-    container_name: lakekeeper
     pull_policy: &lakekeeper-pull-policy always
     ports:
       - "8181:8181"

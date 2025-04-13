@@ -27,6 +27,6 @@ go.work.sum
 .idea
 
 # generated from openapi
-api-gen
+# api-gen
 
 .DS_Store
