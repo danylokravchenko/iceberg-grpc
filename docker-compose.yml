@@ -13,6 +13,8 @@ services:
     depends_on:
       - minio
       - lakekeeper
+    networks:
+      iceberg_net:
 
   minio:
     image: minio/minio
@@ -97,19 +99,6 @@ services:
       - volume-lakekeeper:/bitnami/postgresql
     networks:
       iceberg_net:
-
-  # iceberg:
-  #   image: tabulario/iceberg-rest:latest
-  #   container_name: iceberg
-  #   depends_on:
-  #     - nessie
-  #   environment:
-  #     CATALOG_WAREHOUSE: file:///tmp/warehouse
-  #     CATALOG_IO__IMPL: org.apache.iceberg.aws.s3.S3FileIO
-  #     CATALOG_CATALOG__IMPL: org.apache.iceberg.aws.glue.GlueCatalog
-  #     REST_CATALOG_URI: http://nessie:19120/api/v1
-  #   ports:
-  #     - "8181:8181"
 
 networks:
   iceberg_net:
